@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 use App\Model\Village\Village;
 class VillageController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+        $this->middleware('client.credentials');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -36,7 +42,14 @@ class VillageController extends Controller
      */
     public function store(Request $request)
     {
-  
+        $rules=[];
+        $this->validate($request,$rules);
+
+        $data = $request->all();
+        $village = Village::create($data);
+
+        return response()->json(['data'=>$village],200);
+
     }
 
     /**
@@ -47,7 +60,8 @@ class VillageController extends Controller
      */
     public function show($id)
     {
-        //
+        $village = Village::findOrFail($id);
+        return response()->json(['data'=>$village],200);
     }
 
     /**
@@ -70,7 +84,18 @@ class VillageController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $village = Village::findOrFail($id);
+        $rules = [];
+        $this->validate($request,$rules);
+        
+        if($request->has('village_name')){
+            $village->village_name = $request->village_name;
+
+        }
+
+        $village->save();
+
+        return Response()->json(['data'=>$village],200);
     }
 
     /**
@@ -81,6 +106,9 @@ class VillageController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $village = Village::findOrFail($id);
+        $village->delete();
+
+        return response()->json(['data'=>$village],200);
     }
 }

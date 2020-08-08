@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 use App\Model\Area\Area;
 class AreaController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+        $this->middleware('client.credentials');
+    }
     /**
      * Display a listing of the resource.
      *
